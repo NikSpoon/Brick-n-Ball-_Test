@@ -6,15 +6,15 @@ public class Context : MonoBehaviour
 
     public IAppSystem AppSystem = new AppSystem();
 
-    private void Awake()
+   
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    private static void Initialize()
     {
-        if (Instance != null && Instance != this)
+        if (Instance == null)
         {
-            Destroy(gameObject);
-            return;
+            var go = new GameObject("Context");
+            Instance = go.AddComponent<Context>();
+            DontDestroyOnLoad(go);
         }
-
-        Instance = this;
-        DontDestroyOnLoad(gameObject);
     }
 }
