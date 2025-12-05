@@ -44,17 +44,21 @@ public class UiApp : MonoBehaviour
         }
     }
 
-    public void StartReloadUI(AppState newState)
+    public void AddLoaderPanel(AppState newState)
     {
         AppSystemStateChange(newState);
 
+        _currentLoaderPanel = Instantiate(_loaderPanel, _root.transform);
+    }
+    public void ReloadUI()
+    {
         if (_currentScreen != null)
             Destroy(_currentScreen);
 
-        _currentLoaderPanel = Instantiate(_loaderPanel, _root.transform);
         _currentScreen = Instantiate(_newScreen, _root.transform);
+
     }
-    public void ReloadUI()
+    public void RemuveLoaderPanel()
     {
         if (_currentLoaderPanel != null)
         {

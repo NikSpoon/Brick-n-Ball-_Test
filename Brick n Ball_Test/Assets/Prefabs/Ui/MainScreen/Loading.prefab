@@ -12,6 +12,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Loading
       objectReference: {fileID: 0}
+    - target: {fileID: 2248664979364321324, guid: 4cd99f59de880ac4dbc51a0b4bdaa9d9, type: 3}
+      propertyPath: m_Color.a
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3649567279821517725, guid: 4cd99f59de880ac4dbc51a0b4bdaa9d9, type: 3}
       propertyPath: m_text
       value: Loading

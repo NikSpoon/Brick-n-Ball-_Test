@@ -33,7 +33,7 @@ public class AppControler : MonoBehaviour
                 break;
 
             case AppState.Game:
-                StartCoroutine(ReloadSceneAsync("Game3D", AppState.Game));
+                StartCoroutine(ReloadSceneAsync("Game", AppState.Game));
                 break;
 
             case AppState.Finish:
@@ -48,7 +48,7 @@ public class AppControler : MonoBehaviour
     private IEnumerator ReloadSceneAsync(string newScene, AppState state)
     {
         
-        _uiApp.StartReloadUI(state);
+        _uiApp.AddLoaderPanel(state);
 
         AsyncOperation loadOperation = SceneManager.LoadSceneAsync(newScene);
        
@@ -59,6 +59,7 @@ public class AppControler : MonoBehaviour
         }
        
         _uiApp.ReloadUI();
+        _uiApp.RemuveLoaderPanel();
     }
 }
 
