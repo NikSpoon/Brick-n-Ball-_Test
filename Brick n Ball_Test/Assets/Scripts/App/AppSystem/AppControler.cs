@@ -1,10 +1,11 @@
+using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.InputSystem.LowLevel;
 using UnityEngine.SceneManagement;
 
 public class AppControler : MonoBehaviour
 {
-    [SerializeField] private UiApp _uiApp;
     private void Awake()
     {
         DontDestroyOnLoad(gameObject);
@@ -47,19 +48,36 @@ public class AppControler : MonoBehaviour
 
     private IEnumerator ReloadSceneAsync(string newScene, AppState state)
     {
-        
-        _uiApp.AddLoaderPanel(state);
+        UiApp ui = FindFirstObjectByType<UiApp>();
+        if (ui != null)
+            ui.AddLoaderPanel(state);
 
-        AsyncOperation loadOperation = SceneManager.LoadSceneAsync(newScene);
-       
-        while (!loadOperation.isDone)
-        {
-            
+        AsyncOperation loadOp = SceneManager.LoadSceneAsync(newScene, LoadSceneMode.Additive);
+
+        while (!loadOp.isDone)
             yield return null;
+
+        Scene loadedScene = SceneManager.GetSceneByName(newScene);
+        if (loadedScene.IsValid())
+            SceneManager.SetActiveScene(loadedScene);
+
+        int sceneCount = SceneManager.sceneCount;
+        for (int i = 0; i < sceneCount - 1; i++)
+        {
+            Scene scene = SceneManager.GetSceneAt(i);
+            if (scene.name != newScene && scene.name != "UIScene")
+            {
+                AsyncOperation unloadOp = SceneManager.UnloadSceneAsync(scene);
+                while (!unloadOp.isDone)
+                    yield return null;
+            }
         }
-       
-        _uiApp.ReloadUI();
-        _uiApp.RemuveLoaderPanel();
+
+        if (ui != null)
+        {
+            ui.ReloadUI();
+            ui.RemuveLoaderPanel();
+        }
     }
 }
 
