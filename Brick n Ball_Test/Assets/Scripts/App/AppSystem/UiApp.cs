@@ -15,38 +15,40 @@ public class UiApp : MonoBehaviour
     private GameObject _currentScreen;
     private GameObject _newScreen;
     private GameObject _currentLoaderPanel;
-    private void Awake()
-    {
-        DontDestroyOnLoad(gameObject);
-
-        if (FindObjectsByType<UiApp>(FindObjectsSortMode.None).Length > 1)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
-    }
+   
     private void OnEnable()
     {
         if (_currentScreen == null)
         {
             _currentScreen = Instantiate(_loading, _root);
         }
+
+        Context.Instance.AppSystem.OnStateChange += OnStateChange;
     }
-    private void AppSystemStateChange(AppState state)
+    private void OnDisable()
     {
-        switch (state)
+        Context.Instance.AppSystem.OnStateChange -= OnStateChange;
+    }
+    private void OnStateChange(StateChangeData<AppState, AppTriger> data)
+    {
+        switch (data.NewState)
         {
-            case AppState.MainMenu: _newScreen = _mainMenu; break;
-            case AppState.Game: _newScreen = _game; break;
-            case AppState.Finish: _newScreen = _finish; break;
-            default: _newScreen = _errorPanel; break;
+            case AppState.MainMenu:
+                _newScreen = _mainMenu;
+                break;
+            case AppState.Game:
+                _newScreen = _game;
+                break;
+            case AppState.Finish:
+                _newScreen = _finish;
+                break;
+            default:
+                _newScreen = _errorPanel; 
+                break;
         }
     }
-
     public void AddLoaderPanel(AppState newState)
     {
-        AppSystemStateChange(newState);
 
         _currentLoaderPanel = Instantiate(_loaderPanel, _root.transform);
     }
