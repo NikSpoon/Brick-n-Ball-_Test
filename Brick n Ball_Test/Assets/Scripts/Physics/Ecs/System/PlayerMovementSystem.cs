@@ -3,7 +3,8 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Physics;
 using Unity.Transforms;
-using static UnityEngine.EventSystems.EventTrigger;
+using Unity.VisualScripting;
+using UnityEngine.UIElements;
 
 [BurstCompile]
 public partial struct PlayerMovementSystem : ISystem
@@ -12,13 +13,14 @@ public partial struct PlayerMovementSystem : ISystem
     {
         var dt = SystemAPI.Time.DeltaTime;
 
-        foreach (var (input, moveData, velocity, mass, transform, entity)
+        foreach (var (input, moveData, velocity, mass, transform, playerData, entity)
                  in SystemAPI.Query<
                         RefRO<PlayerEcsInputData>,
                         RefRO<PlayerMovementData>,
                         RefRW<PhysicsVelocity>,
                         RefRW<PhysicsMass>,
-                        RefRO<LocalTransform>>()
+                        RefRO<LocalTransform>,
+                        RefRO<PlayerData>>()
                      .WithAll<Simulate>()
                      .WithEntityAccess())
         {
@@ -31,39 +33,40 @@ public partial struct PlayerMovementSystem : ISystem
             velocity.ValueRW.Linear.x = moveDir.x;
             velocity.ValueRW.Linear.z = moveDir.z;
 
-            bool grounded = IsGrounded(transform.ValueRO.Position, entity, ref state);
+
+            bool grounded = IsGrounded(transform.ValueRO.Position, playerData.ValueRO.GraundRoot, moveData.ValueRO.JumpDistance);
 
             if (input.ValueRO.Jump && grounded)
             {
                 velocity.ValueRW.Linear.y = moveData.ValueRO.JumpForce;
             }
+
+
+            float3 start = transform.ValueRO.Position + playerData.ValueRO.GraundRoot;
+            float3 end = start + new float3(0, -moveData.ValueRO.JumpDistance, 0);
+
+            UnityEngine.Debug.DrawLine(start, end, UnityEngine.Color.red);
         }
     }
-    private bool IsGrounded(float3 position, Entity self, ref SystemState state)
+
+    private bool IsGrounded(float3 position, float3 offset, float distance)
     {
         var physicsWorld = SystemAPI.GetSingleton<PhysicsWorldSingleton>().PhysicsWorld;
 
-        RaycastInput ray = new RaycastInput
+        float3 start = position + offset;
+
+        var ray = new RaycastInput
         {
-            Start = new float3(0,-1,0),
-            End = new float3(0, -3, 0),
+            Start = start,
+            End = start + new float3(0, -distance, 0),
             Filter = CollisionFilter.Default
         };
 
-        if (!physicsWorld.CastRay(ray, out var hit))
+        if (physicsWorld.CastRay(ray, out RaycastHit hit))
         {
-            UnityEngine.Debug.Log("IsGrounded: NO HIT");
-            return false;
+            return hit.Fraction < 1f;
         }
-
-        Entity hitEntity = physicsWorld.Bodies[hit.RigidBodyIndex].Entity;
-
-        bool hitIsGround = state.EntityManager.HasComponent<GroundTag>(hitEntity);
-    
-        if (hitIsGround)
-            return true;
 
         return false;
     }
 }
-

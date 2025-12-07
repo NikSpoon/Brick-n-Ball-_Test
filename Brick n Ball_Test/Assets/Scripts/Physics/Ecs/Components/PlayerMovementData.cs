@@ -4,4 +4,5 @@ public struct PlayerMovementData : IComponentData
 {
     public float MoveSpeed;
     public float JumpForce;
+    public float JumpDistance;
 }
