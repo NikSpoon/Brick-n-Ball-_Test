@@ -1,5 +1,4 @@
 using Unity.Entities;
-using Unity.Physics.Authoring;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -11,6 +10,10 @@ public class PlayerAuthoring : MonoBehaviour
     [SerializeField] private float _jumpForce = 8f;
     [SerializeField] private float _distanseForce = 8f;
     [SerializeField] private Transform _graundRoot;
+    [SerializeField] private Transform _gunPoitRoot;
+    [SerializeField] private GameObject _shellPrefab;
+    [SerializeField] private float _coldaun = 0.25f;
+    [SerializeField] private float _damage = 10f;
     class Baker : Baker<PlayerAuthoring>
     {
         public override void Bake(PlayerAuthoring authoring)
@@ -18,7 +21,8 @@ public class PlayerAuthoring : MonoBehaviour
             var entity = GetEntity(TransformUsageFlags.Dynamic);
             AddComponent(entity, new PlayerData
             {
-                GraundRoot = authoring._graundRoot.position
+                GraundRoot = authoring._graundRoot.position,
+                GunPointerRoot = authoring._gunPoitRoot.position
             });
 
             AddComponent(entity, new PlayerEcsInputData { });
@@ -34,7 +38,17 @@ public class PlayerAuthoring : MonoBehaviour
             {
                 MyInputAction = authoring._myInputAction
             });
+           
+            var shellEntity = GetEntity(authoring._shellPrefab,
+                                       TransformUsageFlags.Dynamic);
 
+            AddComponent(entity, new AttackData
+            {
+                ShellPrefab = shellEntity,
+                Coldaun = authoring._coldaun,
+                Damage = authoring._damage,
+                CurrentColdaun = 0f
+            });
         }
     }
 }
