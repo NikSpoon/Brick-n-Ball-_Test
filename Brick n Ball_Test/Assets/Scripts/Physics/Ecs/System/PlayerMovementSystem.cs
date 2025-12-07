@@ -3,8 +3,6 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Physics;
 using Unity.Transforms;
-using Unity.VisualScripting;
-using UnityEngine.UIElements;
 
 [BurstCompile]
 public partial struct PlayerMovementSystem : ISystem
