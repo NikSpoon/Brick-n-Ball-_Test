@@ -10,7 +10,7 @@ public class PlayerAuthoring : MonoBehaviour
     [SerializeField] private float _jumpForce = 8f;
     [SerializeField] private float _distanseForce = 8f;
     [SerializeField] private Transform _graundRoot;
-    [SerializeField] private Transform _gunPoitRoot;
+    [SerializeField] private Transform _gunPointRoot;
     [SerializeField] private GameObject _shellPrefab;
     [SerializeField] private float _coldaun = 0.25f;
     [SerializeField] private float _damage = 10f;
@@ -21,9 +21,9 @@ public class PlayerAuthoring : MonoBehaviour
             var entity = GetEntity(TransformUsageFlags.Dynamic);
             AddComponent(entity, new PlayerData
             {
-                GraundRoot = authoring._graundRoot.position,
-                GunPointerRoot = authoring._gunPoitRoot.position
-            });
+                GraundRoot = authoring._graundRoot.localPosition,
+                GunPointerRoot = authoring._gunPointRoot.localPosition
+            }); 
 
             AddComponent(entity, new PlayerEcsInputData { });
 

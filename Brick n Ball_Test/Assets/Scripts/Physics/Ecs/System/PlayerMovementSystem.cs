@@ -7,6 +7,7 @@ using Unity.Transforms;
 [BurstCompile]
 public partial struct PlayerMovementSystem : ISystem
 {
+    [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
         var dt = SystemAPI.Time.DeltaTime;
@@ -17,34 +18,39 @@ public partial struct PlayerMovementSystem : ISystem
                         RefRO<PlayerMovementData>,
                         RefRW<PhysicsVelocity>,
                         RefRW<PhysicsMass>,
-                        RefRO<LocalTransform>,
+                        RefRW<LocalTransform>,
                         RefRO<PlayerData>>()
                      .WithAll<Simulate>()
                      .WithEntityAccess())
         {
-            float2 move = math.normalizesafe(input.ValueRO.Move);
 
-            float3 forward = math.mul(transform.ValueRO.Rotation, new float3(0, 0, 1));
-            float3 right = math.mul(transform.ValueRO.Rotation, new float3(1, 0, 0));
-            float3 moveDir = (forward * move.y + right * move.x) * moveData.ValueRO.MoveSpeed;
-
-            velocity.ValueRW.Linear.x = moveDir.x;
-            velocity.ValueRW.Linear.z = moveDir.z;
+            ApplyMovement(ref velocity.ValueRW, in transform.ValueRO, in moveData.ValueRO, in input.ValueRO);
 
 
             bool grounded = IsGrounded(transform.ValueRO.Position, playerData.ValueRO.GraundRoot, moveData.ValueRO.JumpDistance);
-
             if (input.ValueRO.Jump && grounded)
             {
                 velocity.ValueRW.Linear.y = moveData.ValueRO.JumpForce;
             }
 
-
-            float3 start = transform.ValueRO.Position + playerData.ValueRO.GraundRoot;
-            float3 end = start + new float3(0, -moveData.ValueRO.JumpDistance, 0);
-
-            UnityEngine.Debug.DrawLine(start, end, UnityEngine.Color.red);
+            quaternion lookRot = GetRotationFromCamera(transform.ValueRO.Position);
+            if (!lookRot.Equals(quaternion.identity))
+            {
+                transform.ValueRW.Rotation = lookRot;
+            }
         }
+    }
+  
+    private void ApplyMovement(ref PhysicsVelocity velocity, in LocalTransform transform, in PlayerMovementData moveData, in PlayerEcsInputData input)
+    {
+        float2 move = math.normalizesafe(input.Move);
+
+        float3 forward = math.mul(transform.Rotation, new float3(0, 0, 1));
+        float3 right = math.mul(transform.Rotation, new float3(1, 0, 0));
+        float3 moveDir = (forward * move.y + right * move.x) * moveData.MoveSpeed;
+
+        velocity.Linear.x = moveDir.x;
+        velocity.Linear.z = moveDir.z;
     }
 
     private bool IsGrounded(float3 position, float3 offset, float distance)
@@ -66,5 +72,22 @@ public partial struct PlayerMovementSystem : ISystem
         }
 
         return false;
+    }
+
+    private quaternion GetRotationFromCamera(float3 playerPosition)
+    {
+        if (!SystemAPI.TryGetSingleton<CameraData>(out var camData))
+            return quaternion.identity;
+
+        float3 camPos = camData.Position;
+
+        float3 dir = playerPosition - camPos;
+        dir.y = 0;
+        dir = math.normalizesafe(dir);
+
+        if (math.lengthsq(dir) < 1e-5f)
+            return quaternion.identity;
+
+        return quaternion.LookRotationSafe(dir, math.up());
     }
 }
