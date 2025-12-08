@@ -4,7 +4,7 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
-public class BulletSpawner : MonoBehaviour
+public class BulletVisualSpawner : MonoBehaviour
 {
     private EntityManager _em;
 
