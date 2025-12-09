@@ -1,38 +1,44 @@
-using Unity.Burst;
+﻿using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 
+[BurstCompile]
 partial struct SessionSystem : ISystem
 {
+    public void OnCreate(ref SystemState state)
+    {
+        state.RequireForUpdate<PlayerProfData>();
+        state.RequireForUpdate<SessionDataEsc>();
+    }
 
-    [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        var playerProfComp = SystemAPI.ManagedAPI.GetSingleton<PlayerProfComponent>();
-        var sessionComp = SystemAPI.ManagedAPI.GetSingleton<SessionDataComponent>();
+        if (Context.Instance.AppSystem.CurrentState != AppState.Game)
+            return;
 
-        var playerProf = playerProfComp.PlayerProfaile;
-        var session = sessionComp.SessionData;
+        var playerProfData = SystemAPI.GetSingleton<PlayerProfData>();
+        var sessionData = SystemAPI.GetSingleton<SessionDataEsc>();
 
         int scoreDelta = 0;
         int levelDelta = 0;
 
         foreach (var addScore in SystemAPI.Query<RefRO<AddScoreTag>>())
-        {
-            scoreDelta += addScore.ValueRO.Value;  
-        }
+            scoreDelta += addScore.ValueRO.Value;
 
         foreach (var addLevel in SystemAPI.Query<RefRO<AddLevelTag>>())
-        {
             levelDelta += addLevel.ValueRO.Value;
-        }
 
         if (scoreDelta != 0)
-            session.AddScore(scoreDelta);
+            sessionData.PlayerScore += scoreDelta;
 
         if (levelDelta != 0)
-            playerProf.AddLevl(levelDelta);
+            playerProfData.Levl += levelDelta;
 
+        // записываем обратно
+        SystemAPI.SetSingleton(playerProfData);
+        SystemAPI.SetSingleton(sessionData);
+
+        // чистим тэги
         var ecb = new EntityCommandBuffer(Allocator.Temp);
 
         foreach (var (tag, entity) in SystemAPI
@@ -52,5 +58,4 @@ partial struct SessionSystem : ISystem
         ecb.Playback(state.EntityManager);
         ecb.Dispose();
     }
-
 }

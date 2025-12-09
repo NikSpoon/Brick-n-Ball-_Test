@@ -4,20 +4,12 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 
-[BurstCompile]
 public partial struct BrickSpawnerSystem : ISystem
 {
-    [BurstCompile]
-    public void OnCreate(ref SystemState state)
-    {
-
-        state.RequireForUpdate<BrickSpawnerData>();
-        state.RequireForUpdate<BeginSimulationEntityCommandBufferSystem.Singleton>();
-    }
-
-    [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
+        if (Context.Instance.AppSystem.CurrentState != AppState.Game)
+            return;
 
         var em = state.EntityManager;
 

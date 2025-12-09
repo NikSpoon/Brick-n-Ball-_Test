@@ -397,7 +397,7 @@ Transform:
   m_GameObject: {fileID: 274990823}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -7.1, y: -0.5, z: 3}
+  m_LocalPosition: {x: -10.13, y: -0.5, z: 5.8}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -897,7 +897,7 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7021847639922509771, guid: 33cfc55adcf56f748a3f512e405f9897, type: 3}
   m_PrefabInstance: {fileID: 836659734}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &720247557
+--- !u!114 &720247561
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -909,14 +909,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb54ea4f67dc17342bcd49954c53502d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DrawColliders: 1
+  DrawColliders: 0
   DrawColliderEdges: 1
   DrawColliderAabbs: 1
   DrawMassProperties: 1
   DrawBroadphase: 1
-  DrawContacts: 0
-  DrawCollisionEvents: 0
-  DrawTriggerEvents: 0
+  DrawContacts: 1
+  DrawCollisionEvents: 1
+  DrawTriggerEvents: 1
   DrawJoints: 0
   ColliderDisplayMode: 0
   ColliderEdgesDisplayMode: 0
@@ -984,13 +984,17 @@ PrefabInstance:
       propertyPath: _gunPointRoot
       value: 
       objectReference: {fileID: 748928458}
+    - target: {fileID: 2874107038298438689, guid: 33cfc55adcf56f748a3f512e405f9897, type: 3}
+      propertyPath: _distanseForce
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 7021847639922509771, guid: 33cfc55adcf56f748a3f512e405f9897, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7021847639922509771, guid: 33cfc55adcf56f748a3f512e405f9897, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.47
+      value: -0.57
       objectReference: {fileID: 0}
     - target: {fileID: 7021847639922509771, guid: 33cfc55adcf56f748a3f512e405f9897, type: 3}
       propertyPath: m_LocalPosition.z
@@ -1026,7 +1030,31 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7719971035837373088, guid: 33cfc55adcf56f748a3f512e405f9897, type: 3}
       propertyPath: m_Mass
-      value: 100
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7719971035837373088, guid: 33cfc55adcf56f748a3f512e405f9897, type: 3}
+      propertyPath: m_Smoothing
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7719971035837373088, guid: 33cfc55adcf56f748a3f512e405f9897, type: 3}
+      propertyPath: m_MotionType
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7719971035837373088, guid: 33cfc55adcf56f748a3f512e405f9897, type: 3}
+      propertyPath: m_InitialLinearVelocity.x
+      value: 13.76
+      objectReference: {fileID: 0}
+    - target: {fileID: 7719971035837373088, guid: 33cfc55adcf56f748a3f512e405f9897, type: 3}
+      propertyPath: m_InitialLinearVelocity.y
+      value: 9.97
+      objectReference: {fileID: 0}
+    - target: {fileID: 7719971035837373088, guid: 33cfc55adcf56f748a3f512e405f9897, type: 3}
+      propertyPath: m_InitialLinearVelocity.z
+      value: -3.66
+      objectReference: {fileID: 0}
+    - target: {fileID: 7719971035837373088, guid: 33cfc55adcf56f748a3f512e405f9897, type: 3}
+      propertyPath: m_OverrideDefaultMassDistribution
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8883273169777890071, guid: 33cfc55adcf56f748a3f512e405f9897, type: 3}
       propertyPath: m_IsActive
@@ -1047,7 +1075,7 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 823299679456490537, guid: 33cfc55adcf56f748a3f512e405f9897, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 720247557}
+      addedObject: {fileID: 720247561}
   m_SourcePrefab: {fileID: 100100000, guid: 33cfc55adcf56f748a3f512e405f9897, type: 3}
 --- !u!1 &844459855
 GameObject:
@@ -1490,7 +1518,7 @@ Transform:
   m_GameObject: {fileID: 1540344632}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -1, z: 0}
+  m_LocalPosition: {x: 0, y: -1.15, z: 0}
   m_LocalScale: {x: 100, y: 1, z: 100}
   m_ConstrainProportionsScale: 0
   m_Children: []

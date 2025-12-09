@@ -7,24 +7,29 @@ using Unity.Transforms;
 [BurstCompile]
 public partial struct PlayerMovementSystem : ISystem
 {
-    [BurstCompile]
+   [BurstCompile]
     public void OnUpdate(ref SystemState state)
 
     {
-        foreach (var (input, moveData, velocity, mass, transform, playerData, entity)
-                 in SystemAPI.Query<
-                        RefRO<PlayerEcsInputData>,
-                        RefRO<PlayerMovementData>,
-                        RefRW<PhysicsVelocity>,
-                        RefRW<PhysicsMass>,
-                        RefRW<LocalTransform>,
-                        RefRO<PlayerData>>()
-                     .WithAll<Simulate>()
-                     .WithEntityAccess())
+        var dt = SystemAPI.Time.DeltaTime;
+        var physicsWorld = SystemAPI.GetSingleton<PhysicsWorldSingleton>().PhysicsWorld;
+
+        foreach (var (input, moveData, velocity, transform, playerData, entity)
+          in SystemAPI.Query<
+                 RefRO<PlayerEcsInputData>,
+                 RefRO<PlayerMovementData>,
+                 RefRW<PhysicsVelocity>,
+                 RefRW<LocalTransform>,
+                 RefRO<PlayerData>>()
+              .WithAll<Simulate>()
+              .WithEntityAccess())
         {
-
-            ApplyMovement(ref velocity.ValueRW, in transform.ValueRO, in moveData.ValueRO, in input.ValueRO);
-
+            ApplyMovementPhysics(
+                ref velocity.ValueRW,
+                ref transform.ValueRW,
+                in moveData.ValueRO,
+                in input.ValueRO,
+                dt);
 
             bool grounded = IsGrounded(transform.ValueRO.Position, playerData.ValueRO.GraundRoot, moveData.ValueRO.JumpDistance);
             if (input.ValueRO.Jump && grounded)
@@ -39,17 +44,55 @@ public partial struct PlayerMovementSystem : ISystem
             }
         }
     }
-  
-    private void ApplyMovement(ref PhysicsVelocity velocity, in LocalTransform transform, in PlayerMovementData moveData, in PlayerEcsInputData input)
-    {
-        float2 move = math.normalizesafe(input.Move);
 
+    private static void ApplyMovementPhysics(
+    ref PhysicsVelocity velocity,
+    ref LocalTransform transform,
+    in PlayerMovementData moveData,
+    in PlayerEcsInputData input,
+    float dt)
+    {
+        // Сырой инпут
+        float2 rawInput = input.Move;
+
+        // Для дебага можно раскомментить
+        // UnityEngine.Debug.Log($"[Move] RAW input={rawInput}, pos={transform.Position}, velBefore={velocity.Linear}");
+
+        // Нет инпута — гасим горизонтальную скорость, позицию не трогаем
+        if (math.lengthsq(rawInput) < 1e-5f)
+        {
+            float3 v = velocity.Linear;
+            v.x = 0;
+            v.z = 0;
+            velocity.Linear = v;
+            return;
+        }
+
+        float2 move = math.normalizesafe(rawInput);
+
+        // Направления вперёд/вправо от текущего поворота
         float3 forward = math.mul(transform.Rotation, new float3(0, 0, 1));
         float3 right = math.mul(transform.Rotation, new float3(1, 0, 0));
+
+        // Направление движения в мире
         float3 moveDir = (forward * move.y + right * move.x) * moveData.MoveSpeed;
 
-        velocity.Linear.x = moveDir.x;
-        velocity.Linear.z = moveDir.z;
+        // 1) ДВИГАЕМ ПОЗИЦИЮ (как в рабочем варианте без физики)
+        float3 oldPos = transform.Position;
+        float3 newPos = oldPos + moveDir * dt;
+        transform.Position = newPos;
+
+        // 2) ВЫЧИСЛЯЕМ СКОРОСТЬ ДЛЯ ФИЗИКИ ИЗ СМЕЩЕНИЯ
+        float3 vNew = velocity.Linear;
+
+        vNew.x = (newPos.x - oldPos.x) / dt;
+        vNew.z = (newPos.z - oldPos.z) / dt;
+        // Y не трогаем — её меняет гравитация / прыжок
+
+        velocity.Linear = vNew;
+
+        // Для дебага можно раскомментить
+        // UnityEngine.Debug.Log($"[Move] AFTER pos={transform.Position}, vel={velocity.Linear}");
     }
 
     private bool IsGrounded(float3 position, float3 offset, float distance)

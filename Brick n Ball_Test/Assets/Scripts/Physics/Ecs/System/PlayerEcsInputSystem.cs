@@ -1,9 +1,7 @@
 ﻿using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;
-using UnityEngine.InputSystem;
 
-[BurstCompile]
 public partial struct PlayerEcsInputSystem : ISystem
 {
     private bool _initialized;
@@ -14,7 +12,6 @@ public partial struct PlayerEcsInputSystem : ISystem
 
         _initialized = false;
     }
-
     public void OnDestroy(ref SystemState state)
     {
         if (SystemAPI.ManagedAPI.TryGetSingleton<MyInputActionEcs>(out var inputSingleton))
@@ -22,11 +19,8 @@ public partial struct PlayerEcsInputSystem : ISystem
             inputSingleton.MyInputAction.Disable();
         }
     }
-
     public void OnUpdate(ref SystemState state)
     {
-        if (Context.Instance.AppSystem.CurrentState != AppState.Game)
-            return;
         if (!SystemAPI.ManagedAPI.TryGetSingleton<MyInputActionEcs>(out var inputSingleton))
             return;
 
