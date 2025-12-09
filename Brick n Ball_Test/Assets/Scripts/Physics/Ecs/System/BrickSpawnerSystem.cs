@@ -10,6 +10,7 @@ public partial struct BrickSpawnerSystem : ISystem
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
+
         state.RequireForUpdate<BrickSpawnerData>();
         state.RequireForUpdate<BeginSimulationEntityCommandBufferSystem.Singleton>();
     }
@@ -17,6 +18,7 @@ public partial struct BrickSpawnerSystem : ISystem
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
+
         var em = state.EntityManager;
 
         var ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
