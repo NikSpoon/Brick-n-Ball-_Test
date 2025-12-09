@@ -1,4 +1,5 @@
-﻿using Unity.Collections;
+﻿using System.Collections.Generic;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
@@ -10,6 +11,8 @@ public class BulletVisualSpawner : MonoBehaviour
 
     [SerializeField] private Transform _root;
     [SerializeField] private GameObject _bullet;
+
+    private readonly Dictionary<Entity, GameObject> _bulletVisuals = new();
 
     void Awake()
     {
@@ -30,10 +33,10 @@ public class BulletVisualSpawner : MonoBehaviour
             ComponentType.ReadOnly<GameObject>()
         ).ToEntityArray(Allocator.Temp);
 
-        foreach (var entiti in entities)
+        foreach (var entity in entities)
         {
-            var prefabGO = _em.GetComponentObject<GameObject>(entiti);
-            var transform = _em.GetComponentData<LocalTransform>(entiti);
+            var prefabGO = _em.GetComponentObject<GameObject>(entity);
+            var transform = _em.GetComponentData<LocalTransform>(entity);
 
             Vector3 pos = transform.Position;
             quaternion rot = transform.Rotation;
@@ -41,31 +44,48 @@ public class BulletVisualSpawner : MonoBehaviour
 
             var gameOb = Instantiate(_bullet, pos, q, _root);
 
-            _em.RemoveComponent<GameObject>(entiti);
-            _em.AddComponentObject(entiti, gameOb);
-
-            _em.RemoveComponent<NewBullet>(entiti);
+            _em.RemoveComponent<GameObject>(entity);
+            _em.AddComponentObject(entity, gameOb);
+            
+            _bulletVisuals[entity] = gameOb;
+            _em.RemoveComponent<NewBullet>(entity);
         }
     }
 
     private void SyncVisualsWithEcs()
     {
-        using var entities = _em.CreateEntityQuery(
-            ComponentType.ReadOnly<LocalTransform>(),
-            ComponentType.ReadOnly<GameObject>()
-        ).ToEntityArray(Allocator.Temp);
+        var toRemove = new List<Entity>();
 
-        foreach (var entiti in entities)
+        foreach (var kvp in _bulletVisuals)
         {
-            var transform = _em.GetComponentData<LocalTransform>(entiti);
-            var gameOb = _em.GetComponentObject<GameObject>(entiti);
+            Entity entity = kvp.Key;
+            GameObject go = kvp.Value;
+
+            if (!_em.Exists(entity))
+            {
+                if (go != null)
+                    Destroy(go);
+
+                toRemove.Add(entity);
+                continue;
+            }
+
+            var transform = _em.GetComponentData<LocalTransform>(entity);
 
             Vector3 pos = transform.Position;
             quaternion rot = transform.Rotation;
             Quaternion q = new Quaternion(rot.value.x, rot.value.y, rot.value.z, rot.value.w);
 
-            gameOb.transform.position = pos;
-            gameOb.transform.rotation = q;
+            if (go != null)
+            {
+                go.transform.position = pos;
+                go.transform.rotation = q;
+            }
+        }
+
+        foreach (var entity in toRemove)
+        {
+            _bulletVisuals.Remove(entity);
         }
     }
 }

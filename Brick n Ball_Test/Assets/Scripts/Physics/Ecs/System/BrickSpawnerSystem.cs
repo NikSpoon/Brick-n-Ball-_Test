@@ -34,12 +34,10 @@ public partial struct BrickSpawnerSystem : ISystem
                 continue;
             }
 
-            // инициализируем Random
             uint seed = data.RandomSeed;
             if (seed == 0) seed = 1;
             var rand = new Unity.Mathematics.Random(seed);
 
-            // индексы свободных точек (чтобы не повторяться)
             var freeIndices = new NativeList<int>(pointsBuffer.Length, Allocator.Temp);
             for (int i = 0; i < pointsBuffer.Length; i++)
                 freeIndices.Add(i);
@@ -54,7 +52,6 @@ public partial struct BrickSpawnerSystem : ISystem
 
                 var point = pointsBuffer[pointIndex];
 
-                // создаём сущность-кирпич через ECB
                 Entity brick = ecb.Instantiate(data.BrickPrefab);
 
                 ecb.SetComponent(brick, LocalTransform.FromPositionRotationScale(
@@ -68,7 +65,6 @@ public partial struct BrickSpawnerSystem : ISystem
 
             freeIndices.Dispose();
 
-            // один раз отработали — больше не спавним
             ecb.RemoveComponent<BrickSpawnerData>(spawnerEntity);
         }
     }

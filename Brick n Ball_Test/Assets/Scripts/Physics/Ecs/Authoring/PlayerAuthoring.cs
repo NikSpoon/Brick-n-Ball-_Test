@@ -14,6 +14,7 @@ public class PlayerAuthoring : MonoBehaviour
     [SerializeField] private GameObject _shellPrefab;
     [SerializeField] private float _coldaun = 0.25f;
     [SerializeField] private float _damage = 10f;
+    [SerializeField] private int _bollValue = 10;
     class Baker : Baker<PlayerAuthoring>
     {
         public override void Bake(PlayerAuthoring authoring)
@@ -22,7 +23,8 @@ public class PlayerAuthoring : MonoBehaviour
             AddComponent(entity, new PlayerData
             {
                 GraundRoot = authoring._graundRoot.localPosition,
-                GunPointerRoot = authoring._gunPointRoot.localPosition
+                GunPointerRoot = authoring._gunPointRoot.localPosition,
+                BollValue = authoring._bollValue
             }); 
 
             AddComponent(entity, new PlayerEcsInputData { });
