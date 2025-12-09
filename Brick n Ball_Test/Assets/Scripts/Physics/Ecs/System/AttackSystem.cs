@@ -7,10 +7,11 @@ using Unity.Transforms;
 
 partial struct AttackSystem : ISystem
 {
-
-    [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
+        if (Context.Instance.AppSystem.CurrentState != AppState.Game)
+            return;
+
         var dt = SystemAPI.Time.DeltaTime;
 
         var ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();

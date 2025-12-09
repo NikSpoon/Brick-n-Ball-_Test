@@ -1,7 +1,8 @@
-using System;
+﻿
 using System.Collections;
+using Unity.Entities;
+using Unity.Scenes;
 using UnityEngine;
-using UnityEngine.InputSystem.LowLevel;
 using UnityEngine.SceneManagement;
 
 public class AppControler : MonoBehaviour
@@ -72,6 +73,8 @@ public class AppControler : MonoBehaviour
                     yield return null;
             }
         }
+        
+    
 
         if (ui != null)
         {

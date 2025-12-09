@@ -25,8 +25,8 @@ public class PlayerAuthoring : MonoBehaviour
                 GraundRoot = authoring._graundRoot.localPosition,
                 GunPointerRoot = authoring._gunPointRoot.localPosition,
                 BollValue = authoring._bollValue
-            }); 
-
+            });
+            AddComponent(entity, new PlayerProfData(){ });
             AddComponent(entity, new PlayerEcsInputData { });
 
             AddComponent(entity, new PlayerMovementData

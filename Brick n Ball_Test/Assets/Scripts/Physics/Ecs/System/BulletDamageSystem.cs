@@ -22,6 +22,9 @@ public partial struct BulletDamageSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
+        if (Context.Instance.AppSystem.CurrentState != AppState.Game)
+            return;
+
         var sim = SystemAPI.GetSingleton<SimulationSingleton>();
 
         _bulletLookup.Update(ref state);

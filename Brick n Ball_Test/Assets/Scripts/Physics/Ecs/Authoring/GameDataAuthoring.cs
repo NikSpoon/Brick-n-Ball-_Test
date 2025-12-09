@@ -10,14 +10,8 @@ public class GameDataAuthoring : MonoBehaviour
 
             var entity = GetEntity(TransformUsageFlags.None);
 
-            AddComponentObject(entity, new PlayerProfComponent()
-            {
-                PlayerProfaile = Context.Instance.PlayerProf
-            });
-            AddComponentObject(entity, new SessionDataComponent()
-            {
-                SessionData = Context.Instance.SessionData
-            });
+           
+            AddComponent(entity, new SessionDataEsc(){});
         }
     }
 }
