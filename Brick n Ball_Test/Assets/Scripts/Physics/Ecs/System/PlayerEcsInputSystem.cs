@@ -7,7 +7,6 @@ using UnityEngine.InputSystem;
 public partial struct PlayerEcsInputSystem : ISystem
 {
     private bool _initialized;
-
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<MyInputActionEcs>();
@@ -26,6 +25,8 @@ public partial struct PlayerEcsInputSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
+        if (Context.Instance.AppSystem.CurrentState != AppState.Game)
+            return;
         if (!SystemAPI.ManagedAPI.TryGetSingleton<MyInputActionEcs>(out var inputSingleton))
             return;
 

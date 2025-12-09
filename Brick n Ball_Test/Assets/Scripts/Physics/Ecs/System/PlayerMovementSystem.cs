@@ -9,6 +9,7 @@ public partial struct PlayerMovementSystem : ISystem
 {
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
+
     {
         foreach (var (input, moveData, velocity, mass, transform, playerData, entity)
                  in SystemAPI.Query<
