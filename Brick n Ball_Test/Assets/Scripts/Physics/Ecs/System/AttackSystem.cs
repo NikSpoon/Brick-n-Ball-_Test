@@ -20,18 +20,27 @@ partial struct AttackSystem : ISystem
                  in SystemAPI.Query<
                         RefRO<PlayerEcsInputData>,
                         RefRO<LocalTransform>,
-                        RefRO<PlayerData>,
+                        RefRW<PlayerData>,
                         RefRW<AttackData>>()
                      .WithAll<Simulate>()
                      .WithEntityAccess())
         {
             ref var attackData = ref attackDataRW.ValueRW;
 
+
+
             if (attackData.CurrentColdaun > 0f)
                 attackData.CurrentColdaun -= dt;
 
             if (!input.ValueRO.Fire || attackData.CurrentColdaun > 0f)
                 continue;
+
+            if (playerData.ValueRO.BollValue == 0)
+            {
+                // or crtatr some for add shots
+                return;
+            }
+            
 
             float3 localGunOffset = playerData.ValueRO.GunPointerRoot;
             float3 worldGunOffset = math.mul(transform.ValueRO.Rotation, localGunOffset);
@@ -40,8 +49,9 @@ partial struct AttackSystem : ISystem
             float3 forward = math.mul(transform.ValueRO.Rotation, new float3(0, 0, 1));
 
             Entity shell = ecb.Instantiate(attackData.ShellPrefab);
+            playerData.ValueRW.BollValue -= 1;
 
-            ecb.AddComponent(shell, new NewBullet{ });
+            ecb.AddComponent(shell, new NewBullet { });
             ecb.SetComponent(shell, new LocalTransform
             {
                 Position = gunPos,

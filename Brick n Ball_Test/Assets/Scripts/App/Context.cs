@@ -3,10 +3,11 @@
 public class Context : MonoBehaviour
 {
     public static Context Instance { get; private set; }
-
+   
     public IAppSystem AppSystem = new AppSystem();
 
-   
+    public PlayerProf PlayerProf = new PlayerProf();
+    public SessionData SessionData = new SessionData();
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     private static void Initialize()
     {
@@ -16,5 +17,10 @@ public class Context : MonoBehaviour
             Instance = go.AddComponent<Context>();
             DontDestroyOnLoad(go);
         }
+    }
+
+    private void OnDisable()
+    {
+        SessionData.ClearSession();
     }
 }

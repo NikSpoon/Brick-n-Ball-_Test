@@ -12,6 +12,7 @@ public class BulletAuthoring : MonoBehaviour
             var entity = GetEntity(TransformUsageFlags.None);
 
             AddComponentObject(entity, authoring._visualPrefab);
+            AddComponent<BulletTag>(entity);
         }
     }
 }

@@ -10,8 +10,6 @@ public partial struct PlayerMovementSystem : ISystem
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        var dt = SystemAPI.Time.DeltaTime;
-
         foreach (var (input, moveData, velocity, mass, transform, playerData, entity)
                  in SystemAPI.Query<
                         RefRO<PlayerEcsInputData>,
