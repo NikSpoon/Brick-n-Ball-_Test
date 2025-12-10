@@ -1,7 +1,5 @@
 ﻿
 using System.Collections;
-using Unity.Entities;
-using Unity.Scenes;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -54,7 +52,6 @@ public class AppControler : MonoBehaviour
             ui.AddLoaderPanel(state);
 
         AsyncOperation loadOp = SceneManager.LoadSceneAsync(newScene, LoadSceneMode.Additive);
-
         while (!loadOp.isDone)
             yield return null;
 
@@ -62,10 +59,10 @@ public class AppControler : MonoBehaviour
         if (loadedScene.IsValid())
             SceneManager.SetActiveScene(loadedScene);
 
-        int sceneCount = SceneManager.sceneCount;
-        for (int i = 0; i < sceneCount - 1; i++)
+        for (int i = SceneManager.sceneCount - 1; i >= 0; i--)
         {
             Scene scene = SceneManager.GetSceneAt(i);
+
             if (scene.name != newScene && scene.name != "UIScene")
             {
                 AsyncOperation unloadOp = SceneManager.UnloadSceneAsync(scene);
@@ -73,8 +70,6 @@ public class AppControler : MonoBehaviour
                     yield return null;
             }
         }
-        
-    
 
         if (ui != null)
         {
@@ -82,5 +77,5 @@ public class AppControler : MonoBehaviour
             ui.RemuveLoaderPanel();
         }
     }
-}
 
+}

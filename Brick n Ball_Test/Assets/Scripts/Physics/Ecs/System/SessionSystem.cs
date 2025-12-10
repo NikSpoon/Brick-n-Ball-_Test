@@ -29,16 +29,17 @@ partial struct SessionSystem : ISystem
             levelDelta += addLevel.ValueRO.Value;
 
         if (scoreDelta != 0)
+        {
             sessionData.PlayerScore += scoreDelta;
+
+            ApplyBrickLeveling(ref playerProfData, ref sessionData, scoreDelta, ref levelDelta);
+        }
 
         if (levelDelta != 0)
             playerProfData.Levl += levelDelta;
 
-        // записываем обратно
         SystemAPI.SetSingleton(playerProfData);
         SystemAPI.SetSingleton(sessionData);
-
-        // чистим тэги
         var ecb = new EntityCommandBuffer(Allocator.Temp);
 
         foreach (var (tag, entity) in SystemAPI
@@ -57,5 +58,60 @@ partial struct SessionSystem : ISystem
 
         ecb.Playback(state.EntityManager);
         ecb.Dispose();
+    }
+
+
+    /// Updates brick kill progress and awards level-ups.
+    /// For every (currentLevel * 2) destroyed bricks → player gains +1 level.
+    /// bricksGained — number of destroyed bricks gained this frame (scoreDelta).
+    /// levelDelta is passed by ref so we can stack level gains together with AddLevelTag.
+    /// Returns how many bricks are required to gain the next level
+    
+    /// from the given current level.
+    /// Level 0 → need 1 brick,
+    /// Level 1 → need 3 bricks,
+    /// Level 2 → need 7 bricks,
+    /// Level 3 → need 13 bricks, etc.
+    /// Formula: 1 + level * (level + 1)
+
+    private static void ApplyBrickLeveling(
+     ref PlayerProfData playerProf,
+     ref SessionDataEsc session,
+     int bricksGained,
+     ref int levelDelta)
+    {
+        if (bricksGained <= 0)
+            return;
+
+       
+        session.BrickKillProgress += bricksGained;
+
+        int currentLevel = playerProf.Levl;
+
+       
+        while (true)
+        {
+            int bricksNeeded = BricksNeededForNextLevel(currentLevel);
+
+            
+            if (session.BrickKillProgress < bricksNeeded)
+                break;
+
+          
+            session.BrickKillProgress -= bricksNeeded;
+            currentLevel++;
+            levelDelta++;
+        }
+
+        playerProf.Levl = currentLevel;
+    }
+
+   
+    private static int BricksNeededForNextLevel(int currentLevel)
+    {
+        if (currentLevel <= 0)
+            return 1;
+
+        return 1 + currentLevel * (currentLevel + 1);
     }
 }
