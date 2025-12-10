@@ -9,7 +9,7 @@ public partial struct BulletDamageSystem : ISystem
     private ComponentLookup<BrickTag> _brickLookup;
     private ComponentLookup<LastWallTeg> _lastWallLookup;
     private ComponentLookup<BrickHealth> _brickHealthLookup;
-
+    
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<SimulationSingleton>();
@@ -47,13 +47,16 @@ public partial struct BulletDamageSystem : ISystem
         state.Dependency = job.Schedule(sim, state.Dependency);
     }
 
+    // ====== ВОТ ТУТ МОГЛИ БЫ БЫТЬ приватные методы системы, 
+    // но вызывать их из Burst-джоба нельзя.
+    // Поэтому реальные AddScore/AddLevel находятся ВНУТРИ job-struct. ======
+
     [BurstCompile]
     struct BulletCollisionJob : ICollisionEventsJob
     {
         [ReadOnly] public ComponentLookup<BulletTag> BulletLookup;
         [ReadOnly] public ComponentLookup<BrickTag> BrickLookup;
         [ReadOnly] public ComponentLookup<LastWallTeg> LastWallLookup;
-
 
         [NativeDisableParallelForRestriction]
         public ComponentLookup<BrickHealth> BrickHealthLookup;
@@ -72,12 +75,11 @@ public partial struct BulletDamageSystem : ISystem
             bool aIsWall = LastWallLookup.HasComponent(a);
             bool bIsWall = LastWallLookup.HasComponent(b);
 
-
-            if (aIsBullet && aIsBrick == false && (bIsBrick || bIsWall))
+            if (aIsBullet && !aIsBrick && (bIsBrick || bIsWall))
             {
                 HandleHit(b, a);
             }
-            else if (bIsBullet && bIsBrick == false && (aIsBrick || aIsWall))
+            else if (bIsBullet && !bIsBrick && (aIsBrick || aIsWall))
             {
                 HandleHit(a, b);
             }
@@ -92,20 +94,33 @@ public partial struct BulletDamageSystem : ISystem
 
                 if (health.Value <= 0)
                 {
+                    AddScore(1);        
                     ECB.DestroyEntity(0, target);
                 }
                 else
                 {
                     BrickHealthLookup[target] = health;
                 }
+
             }
             else
             {
-
                 ECB.DestroyEntity(0, bullet);
             }
+        }
 
+        // ====== Add SCORE / LEVEL ======
+
+        private void AddScore(int amount)
+        {
+            var e = ECB.CreateEntity(0);
+            ECB.AddComponent(0, e, new AddScoreTag { Value = amount });
+        }
+
+        private void AddLevel(int amount)
+        {
+            var e = ECB.CreateEntity(0);
+            ECB.AddComponent(0, e, new AddLevelTag { Value = amount });
         }
     }
-
 }

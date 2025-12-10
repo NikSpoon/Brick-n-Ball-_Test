@@ -19,26 +19,28 @@ public partial struct GameContextSyncSystem : ISystem
         var profData = SystemAPI.GetSingleton<PlayerProfData>();
         var sessionData = SystemAPI.GetSingleton<SessionDataEsc>();
 
-        ctx.PlayerProf.SyncFromData(profData);
-        ctx.SessionData.SyncFromData(sessionData);
+        SyncPlayerProfRaw(ctx.PlayerProf, in profData);
+        SyncSessionRaw(ctx.SessionData, in sessionData);
     }
 
+    private static void SyncPlayerProfRaw(PlayerProf prof, in PlayerProfData data)
+    {
+       
+
+        if (prof.Name == null)
+            prof.InitProf("Player");  // for som...
+
+        if (prof.Levl != data.Levl)
+        {
+            prof.ForceSetLevel(data.Levl);
+        }
+    }
+
+    private static void SyncSessionRaw(SessionData session, in SessionDataEsc data)
+    {
+        if (session.PlayerScore != data.PlayerScore)
+        {
+            session.ForceSetScore(data.PlayerScore);
+        }
+    }
 }
-
-    public static class PlayerProfExtensions
-    {
-        public static void SyncFromData(this PlayerProf prof, in PlayerProfData data)
-        {
-
-            prof.InitProf(prof.Name ?? "Player"); 
-            prof.AddLevl();
-        }
-    }
-
-    public static class SessionDataExtensions
-    {
-        public static void SyncFromData(this SessionData session, in SessionDataEsc data)
-        {
-            session.AddScore(); 
-        }
-    }
