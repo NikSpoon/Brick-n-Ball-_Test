@@ -22,10 +22,14 @@ public partial struct PlayerEcsInputSystem : ISystem
     public void OnUpdate(ref SystemState state)
     {
         if (!SystemAPI.ManagedAPI.TryGetSingleton<MyInputActionEcs>(out var inputSingleton))
+        {
+            _initialized = false; 
             return;
+        }
 
         var asset = inputSingleton.MyInputAction;
 
+     
         if (!_initialized)
         {
             asset.Enable();
@@ -33,6 +37,7 @@ public partial struct PlayerEcsInputSystem : ISystem
         }
 
         var map = asset.FindActionMap("GamePlay", throwIfNotFound: true);
+        if (!map.enabled) map.Enable();
 
         var moveAction = map.FindAction("Movement", throwIfNotFound: true);
         var jumpAction = map.FindAction("Jump", throwIfNotFound: true);
