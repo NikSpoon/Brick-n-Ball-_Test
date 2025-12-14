@@ -12,7 +12,7 @@ public class PlayerAuthoring : MonoBehaviour
     [SerializeField] private Transform _graundRoot;
     [SerializeField] private Transform _gunPointRoot;
     [SerializeField] private GameObject _shellPrefab;
-    [SerializeField] private float _coldaun = 0.25f;
+    [SerializeField] private float _coldaun = 2.2f;
     [SerializeField] private float _damage = 10f;
     [SerializeField] private int _bollValue = 10;
     class Baker : Baker<PlayerAuthoring>
@@ -28,7 +28,7 @@ public class PlayerAuthoring : MonoBehaviour
             });
             AddComponent(entity, new PlayerProfData(){ });
             AddComponent(entity, new PlayerEcsInputData { });
-
+            AddComponent(entity, new PlayerLookInput { });
             AddComponent(entity, new PlayerMovementData
             {
                 MoveSpeed = authoring._moveSpeed,

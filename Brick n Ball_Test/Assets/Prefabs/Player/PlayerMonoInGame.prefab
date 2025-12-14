@@ -12,6 +12,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PlayerMonoInGame
       objectReference: {fileID: 0}
+    - target: {fileID: 3951883498650062460, guid: 987ccc4b4de888243b7b5ccd883f835c, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 21468a2457115164587e0d009f65ee2f, type: 2}
     - target: {fileID: 8055632309396077407, guid: 987ccc4b4de888243b7b5ccd883f835c, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

@@ -1,6 +1,4 @@
-﻿
-using Unity.Burst;
-using Unity.Entities;
+﻿using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Physics;
 using Unity.Transforms;
@@ -41,13 +39,15 @@ partial struct AttackSystem : ISystem
                 // or crtatr some for add shots
                 return;
             }
-            
+
+           
 
             float3 localGunOffset = playerData.ValueRO.GunPointerRoot;
             float3 worldGunOffset = math.mul(transform.ValueRO.Rotation, localGunOffset);
             float3 gunPos = transform.ValueRO.Position + worldGunOffset;
 
             float3 forward = math.mul(transform.ValueRO.Rotation, new float3(0, 0, 1));
+
 
             Entity shell = ecb.Instantiate(attackData.ShellPrefab);
             playerData.ValueRW.BollValue -= 1;

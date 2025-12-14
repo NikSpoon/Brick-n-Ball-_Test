@@ -6,7 +6,7 @@ public class SessionUi : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _name;
     [SerializeField] private TextMeshProUGUI _levl;
     [SerializeField] private TextMeshProUGUI _score;
-
+    
     
     private void OnEnable()
     {
@@ -32,4 +32,5 @@ public class SessionUi : MonoBehaviour
     {
         _score.text = $"{value}";
     }
+   
 }
