@@ -89,9 +89,10 @@ public partial struct BulletDamageSystem : ISystem
                 var health = BrickHealthLookup[target];
                 health.Value--;
 
+                AddScore(1);
+                
                 if (health.Value <= 0)
                 {
-                    AddScore(1);        
                     ECB.DestroyEntity(0, target);
                 }
                 else
