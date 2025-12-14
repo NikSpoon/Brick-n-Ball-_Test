@@ -1,60 +1,60 @@
-using UnityEditor.Rendering;
+
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class InputMapSwitcher : MonoBehaviour
 {
-    [SerializeField] private InputActionAsset inputActions;
+    [SerializeField] private InputActionAsset _inputActions;
 
-    private bool menuOpen;
+    private bool _menuOpen;
 
-    private InputActionMap gameplay;
-    private InputActionMap ui;
+    private InputActionMap _gameplay;
+    private InputActionMap _ui;
 
     private void Awake()
     {
-        gameplay = inputActions.FindActionMap("GamePlay", true);
-        ui = inputActions.FindActionMap("UI", true);
+        _gameplay = _inputActions.FindActionMap("GamePlay", true);
+        _ui = _inputActions.FindActionMap("UI", true);
 
 
         if (Context.Instance.AppSystem.CurrentState == AppState.Game)
         {
-            gameplay.Enable();
-            ui.Disable();
+            _gameplay.Enable();
+            _ui.Disable();
         }
         else
         {
-            ui.Enable();
-            gameplay.Disable();
+            _ui.Enable();
+            _gameplay.Disable();
         }
     }
     public void OpenMenu()
     {
-        if (menuOpen) return;
+        if (_menuOpen) return;
 
-        menuOpen = true;
+        _menuOpen = true;
 
-        gameplay.Disable();
-        ui.Enable();
+        _gameplay.Disable();
+        _ui.Enable();
 
         Time.timeScale = 0f; 
     }
 
     public void CloseMenu()
     {
-        if (!menuOpen) return;
+        if (!_menuOpen) return;
 
-        menuOpen = false;
+        _menuOpen = false;
 
-        ui.Disable();
-        gameplay.Enable();
+        _ui.Disable();
+        _gameplay.Enable();
 
         Time.timeScale = 1f;
     }
 
     public void ToggleMenu()
     {
-        if (menuOpen) CloseMenu();
+        if (_menuOpen) CloseMenu();
         else OpenMenu();
     }
 }

@@ -48,6 +48,8 @@ public class PlayerAnimator : MonoBehaviour
         bool attackPulse = _attack != null && _attack.action.triggered;
 
         _animator.SetBool("Jump", jumpPulse);
-        _animator.SetBool("Attack", attackPulse);
+
+        if (attackPulse)
+            _animator.SetTrigger("Attack");
     }
 }

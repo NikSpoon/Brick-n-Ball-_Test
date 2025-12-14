@@ -3223,6 +3223,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7495836784579966431, guid: 4cd99f59de880ac4dbc51a0b4bdaa9d9, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 9141148457220475800, guid: 4cd99f59de880ac4dbc51a0b4bdaa9d9, type: 3}
       propertyPath: m_AnchoredPosition.x
       value: 0
@@ -3288,7 +3292,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8677450779b39bf49bcde5deb1c4c12a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputActions: {fileID: -944628639613478452, guid: f08659a045dd7b346b31db0d73fba7d2, type: 3}
+  _inputActions: {fileID: -944628639613478452, guid: f08659a045dd7b346b31db0d73fba7d2, type: 3}
 --- !u!224 &9050923181503481882 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7492222320193663498, guid: 4cd99f59de880ac4dbc51a0b4bdaa9d9, type: 3}
@@ -3305,6 +3309,10 @@ PrefabInstance:
     - target: {fileID: 216955112770739119, guid: c0877e23585967c49b6699d5a73ab9a8, type: 3}
       propertyPath: m_Name
       value: Options(Button)
+      objectReference: {fileID: 0}
+    - target: {fileID: 216955112770739119, guid: c0877e23585967c49b6699d5a73ab9a8, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6997271093856501661, guid: c0877e23585967c49b6699d5a73ab9a8, type: 3}
       propertyPath: m_Pivot.x

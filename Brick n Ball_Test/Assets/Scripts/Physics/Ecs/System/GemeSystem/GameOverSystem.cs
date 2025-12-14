@@ -47,7 +47,7 @@ public partial struct GameOverSystem : ISystem
             TriggerFinish(ref state, FinishReason.Win);
             return;
         }
-
+   
         var playerData = _playerQuery.GetSingleton<PlayerData>();
         int bulletsAlive = _bulletsQuery.CalculateEntityCount();
 
@@ -55,6 +55,7 @@ public partial struct GameOverSystem : ISystem
         {
             TriggerFinish(ref state, FinishReason.Lose);
         }
+
     }
 
     private void TriggerFinish(ref SystemState state, FinishReason reason)
