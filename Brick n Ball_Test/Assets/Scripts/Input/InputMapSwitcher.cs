@@ -1,3 +1,4 @@
+using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -15,10 +16,18 @@ public class InputMapSwitcher : MonoBehaviour
         gameplay = inputActions.FindActionMap("GamePlay", true);
         ui = inputActions.FindActionMap("UI", true);
 
-        ui.Enable();
-        gameplay.Disable();
-    }
 
+        if (Context.Instance.AppSystem.CurrentState == AppState.Game)
+        {
+            gameplay.Enable();
+            ui.Disable();
+        }
+        else
+        {
+            ui.Enable();
+            gameplay.Disable();
+        }
+    }
     public void OpenMenu()
     {
         if (menuOpen) return;

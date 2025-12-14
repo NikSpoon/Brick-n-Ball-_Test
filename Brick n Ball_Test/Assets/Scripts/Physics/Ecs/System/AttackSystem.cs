@@ -37,7 +37,7 @@ partial struct AttackSystem : ISystem
             if (playerData.ValueRO.BollValue == 0)
             {
                 // or crtatr some for add shots
-                return;
+                continue;
             }
 
            

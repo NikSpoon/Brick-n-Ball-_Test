@@ -7,13 +7,20 @@ using Unity.Transforms;
 
 [BurstCompile]
 [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
-[UpdateBefore(typeof(PhysicsSystemGroup))]
+[UpdateAfter(typeof(PhysicsSystemGroup))]
 public partial struct PlayerMovementSystem : ISystem
 {
-   [BurstCompile]
+    public void OnCreate(ref SystemState state)
+    {
+        state.RequireForUpdate<SimulationSingleton>();
+        state.RequireForUpdate<PhysicsWorldSingleton>();
+    }
     public void OnUpdate(ref SystemState state)
 
     {
+        if (Context.Instance.AppSystem.CurrentState != AppState.Game)
+            return;
+
         var dt = SystemAPI.Time.DeltaTime;
         var physicsWorld = SystemAPI.GetSingleton<PhysicsWorldSingleton>().PhysicsWorld;
 

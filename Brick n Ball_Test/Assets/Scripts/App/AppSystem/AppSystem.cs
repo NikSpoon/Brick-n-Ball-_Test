@@ -25,7 +25,6 @@ public class AppSystem : IAppSystem
         _stateMashine.AddTransition(AppState.MainMenu, AppTriger.ToGame, AppState.Game);
 
         _stateMashine.AddTransition(AppState.Game, AppTriger.ToFinish, AppState.Finish);
-        _stateMashine.AddTransition(AppState.Game, AppTriger.ToMainMenu, AppState.MainMenu);
 
         _stateMashine.AddTransition(AppState.Finish, AppTriger.ToMainMenu, AppState.MainMenu);
 

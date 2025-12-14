@@ -1,5 +1,4 @@
-﻿using Unity.Burst;
-using Unity.Collections;
+﻿using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
@@ -11,9 +10,8 @@ public partial struct BrickSpawnerSystem : ISystem
         if (Context.Instance.AppSystem.CurrentState != AppState.Game)
             return;
 
-        var em = state.EntityManager;
-
-        var ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
+        var ecbSingleton =
+            SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
         var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
         foreach (var (spawnerData, pointsBuffer, spawnerEntity)
@@ -28,10 +26,6 @@ public partial struct BrickSpawnerSystem : ISystem
                 continue;
             }
 
-            uint seed = data.RandomSeed;
-            if (seed == 0) seed = 1;
-            var rand = new Unity.Mathematics.Random(seed);
-
             var freeIndices = new NativeList<int>(pointsBuffer.Length, Allocator.Temp);
             for (int i = 0; i < pointsBuffer.Length; i++)
                 freeIndices.Add(i);
@@ -40,7 +34,7 @@ public partial struct BrickSpawnerSystem : ISystem
 
             for (int i = 0; i < spawnCount; i++)
             {
-                int idxInList = rand.NextInt(0, freeIndices.Length);
+                int idxInList = UnityEngine.Random.Range(0, freeIndices.Length);
                 int pointIndex = freeIndices[idxInList];
                 freeIndices.RemoveAtSwapBack(idxInList);
 
@@ -48,17 +42,16 @@ public partial struct BrickSpawnerSystem : ISystem
 
                 Entity brick = ecb.Instantiate(data.BrickPrefab);
 
-                ecb.SetComponent(brick, LocalTransform.FromPositionRotationScale(
-                    point.Position,
-                    point.Rotation,
-                    1f
-                ));
+                ecb.SetComponent(brick,
+                    LocalTransform.FromPositionRotationScale(
+                        point.Position,
+                        point.Rotation,
+                        1f));
 
                 ecb.AddComponent<BrickTag>(brick);
             }
 
             freeIndices.Dispose();
-
             ecb.RemoveComponent<BrickSpawnerData>(spawnerEntity);
         }
     }

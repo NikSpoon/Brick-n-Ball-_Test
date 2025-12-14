@@ -16,7 +16,7 @@ public class PlayerProf
     public void InitTestProf()
     {
         Name = "Testr";
-        Levl = 100;
+        Levl = 0;
     }
     public void AddLevl(int value)
     {
