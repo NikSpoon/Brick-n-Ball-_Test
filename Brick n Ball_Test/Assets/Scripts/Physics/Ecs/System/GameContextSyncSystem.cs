@@ -16,7 +16,7 @@ public partial struct GameContextSyncSystem : ISystem
         if (ctx == null)
             return;
 
-        var profData = SystemAPI.GetSingleton<PlayerProfData>();
+        var profData = SystemAPI.GetSingleton<PlayerProfData>();    
         var sessionData = SystemAPI.GetSingleton<SessionDataEsc>();
 
         SyncPlayerProfRaw(ctx.PlayerProf, in profData);
