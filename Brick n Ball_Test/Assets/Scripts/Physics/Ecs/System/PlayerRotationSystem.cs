@@ -8,9 +8,10 @@ using Unity.Transforms;
 [BurstCompile]
 public partial struct PlayerRotationSystem : ISystem
 {
-    [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
+        if (Context.Instance.AppSystem.CurrentState != AppState.Game)
+            return;
 
         float dt = SystemAPI.Time.DeltaTime;
 

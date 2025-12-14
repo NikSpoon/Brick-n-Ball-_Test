@@ -5,9 +5,9 @@ public class GameUi : MonoBehaviour
     [SerializeField] private GameObject _options;
     [SerializeField] private GameObject _finishPanel;
 
-    public void GoTuMeinMenu()
+    public void GoToFinish()
     {
-        Context.Instance.AppSystem.Trigger(AppTriger.ToMainMenu);
+        Context.Instance.AppSystem.Trigger(AppTriger.ToFinish);
     }
     public void OpenMenu()
     {

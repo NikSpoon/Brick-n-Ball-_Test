@@ -8,6 +8,8 @@ public class Context : MonoBehaviour
 
     public PlayerProf PlayerProf = new PlayerProf();
     public SessionData SessionData = new SessionData();
+    public FinishDataProf FinishRunData = new FinishDataProf();
+
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     private static void Initialize()
     {
@@ -22,5 +24,6 @@ public class Context : MonoBehaviour
     private void OnDisable()
     {
         SessionData.ClearSession();
+        FinishRunData.ClearFinishData();
     }
 }

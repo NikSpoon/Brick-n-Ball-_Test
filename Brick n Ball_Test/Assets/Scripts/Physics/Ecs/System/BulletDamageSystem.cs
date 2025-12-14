@@ -47,9 +47,6 @@ public partial struct BulletDamageSystem : ISystem
         state.Dependency = job.Schedule(sim, state.Dependency);
     }
 
-    // ====== ВОТ ТУТ МОГЛИ БЫ БЫТЬ приватные методы системы, 
-    // но вызывать их из Burst-джоба нельзя.
-    // Поэтому реальные AddScore/AddLevel находятся ВНУТРИ job-struct. ======
 
     [BurstCompile]
     struct BulletCollisionJob : ICollisionEventsJob
@@ -119,6 +116,7 @@ public partial struct BulletDamageSystem : ISystem
 
         private void AddLevel(int amount)
         {
+            //For other Vip brick(for example)
             var e = ECB.CreateEntity(0);
             ECB.AddComponent(0, e, new AddLevelTag { Value = amount });
         }
